@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Enhanced Merge Sort Visualization</title>
-    <link rel="stylesheet" href="m.css">
+    <link rel="stylesheet" href="q.css">
 </head>
 <body>
     <nav>
@@ -22,8 +22,11 @@
             <label for="arraySize">Array Size:</label>
             <input type="number" id="arraySize" min="4" max="20" value="8">
             <button onclick="generateArray()">Generate Array</button>
-            <button onclick="startSort()">Start Sort</button>
+            <button onclick="addElement()">Add Element</button>
+            <button onclick="removeElement()">Remove Element</button>
+            <button onclick="startSort()">Sort</button>
             <button onclick="stepSort()" id="stepButton" disabled>Step</button>
+            <button onclick="removeStep()" id="removeStepButton" disabled>Remove Step</button>
         </div>
         <div id="array-container"></div>
         <div id="message-box">
@@ -31,6 +34,6 @@
             <div id="messages"></div>
         </div>
     </div>
-    <script src="m.js"></script>
+    <script src="q.js"></script>
 </body>
 </html>
