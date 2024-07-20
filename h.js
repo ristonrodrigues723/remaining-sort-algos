@@ -171,3 +171,5 @@ function removeNumber() {
     visualizeHeap();
     addMessage(`Number ${removedNumber} removed and heap rebuilt`);
 }
+
+
