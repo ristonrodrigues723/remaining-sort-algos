@@ -4,29 +4,25 @@ let sorting = false;
 let comparisons = 0;
 let swaps = 0;
 
-function initializeHeap() {
-    const input = document.getElementById('numberInput').value;
-    heap = input.split(' ').map(Number).filter(n => !isNaN(n));
-    if (heap.length === 0) {
-        alert("Please enter valid numbers!");
+function generateRandomNumbers() {
+    const size = parseInt(document.getElementById('arraySize').value);
+    if (size < 5 || size > 20) {
+        alert("Please enter a size between 5 and 20");
         return;
     }
-    resetStats();
-    buildMaxHeap();
-    visualizeHeap();
-    updateButtons(true, false, true);
-    updateExplanation("Max heap built. Ready to sort!");
-}
-
-function generateRandomNumbers() {
-    const count = 10;
-    heap = Array.from({length: count}, () => Math.floor(Math.random() * 100));
-    document.getElementById('numberInput').value = heap.join(' ');
+    heap = Array.from({length: size}, () => Math.floor(Math.random() * 100) + 1);
     resetStats();
     buildMaxHeap();
     visualizeHeap();
     updateButtons(true, false, true);
     updateExplanation("Random numbers generated and max heap built. Ready to sort!");
+}
+
+function initializeHeap() {
+    buildMaxHeap();
+    visualizeHeap();
+    updateButtons(true, false, true);
+    updateExplanation("Max heap built. Ready to sort!");
 }
 
 function buildMaxHeap() {
@@ -80,19 +76,31 @@ function step() {
 }
 
 function visualizeHeap() {
-    const heapContainer = document.getElementById('heap');
-    heapContainer.innerHTML = '';
+    const barContainer = document.getElementById('bar-container');
+    const numberContainer = document.getElementById('number-container');
+    barContainer.innerHTML = '';
+    numberContainer.innerHTML = '';
+
+    const maxValue = Math.max(...heap);
+    
     heap.forEach((value, index) => {
-        const node = document.createElement('div');
-        node.className = 'node';
+        const bar = document.createElement('div');
+        bar.className = 'bar';
+        const height = (value / maxValue) * 280;
+        bar.style.height = `${height}px`;
+        
         if (sorting && index > sortingIndex) {
-            node.classList.add('sorted');
+            bar.style.backgroundColor = '#2ecc71';
+        } else if (index === 0 && sorting) {
+            bar.style.backgroundColor = '#e74c3c';
         }
-        if (index === 0 && sorting) {
-            node.classList.add('active');
-        }
-        node.textContent = value;
-        heapContainer.appendChild(node);
+        
+        barContainer.appendChild(bar);
+
+        const number = document.createElement('div');
+        number.className = 'number';
+        number.textContent = value;
+        numberContainer.appendChild(number);
     });
 }
 
@@ -121,8 +129,8 @@ function reset() {
     heap = [];
     sorting = false;
     resetStats();
-    document.getElementById('numberInput').value = '';
-    document.getElementById('heap').innerHTML = '';
+    document.getElementById('bar-container').innerHTML = '';
+    document.getElementById('number-container').innerHTML = '';
     updateButtons(false, false, false);
     updateExplanation('');
 }
