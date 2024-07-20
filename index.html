@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Heap Sort Visualization</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+        #heap {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        .node {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: #4CAF50;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 5px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Heap Sort Visualization</h1>
+    <input type="text" id="numberInput" placeholder="Enter numbers separated by spaces">
+    <button onclick="initializeHeap()">Initialize Heap</button>
+    <button onclick="sortHeap()">Sort Heap</button>
+    <div id="heap"></div>
+
+    <script>
+        let heap = [];
+
+        function initializeHeap() {
+            const input = document.getElementById('numberInput').value;
+            heap = input.split(' ').map(Number).filter(n => !isNaN(n));
+            buildMaxHeap();
+            visualizeHeap();
+        }
+
+        function buildMaxHeap() {
+            for (let i = Math.floor(heap.length / 2) - 1; i >= 0; i--) {
+                heapify(heap.length, i);
+            }
+        }
+
+        function heapify(n, i) {
+            let largest = i;
+            const left = 2 * i + 1;
+            const right = 2 * i + 2;
+
+            if (left < n && heap[left] > heap[largest]) {
+                largest = left;
+            }
+
+            if (right < n && heap[right] > heap[largest]) {
+                largest = right;
+            }
+
+            if (largest !== i) {
+                [heap[i], heap[largest]] = [heap[largest], heap[i]];
+                heapify(n, largest);
+            }
+        }
+
+        function sortHeap() {
+            for (let i = heap.length - 1; i > 0; i--) {
+                [heap[0], heap[i]] = [heap[i], heap[0]];
+                heapify(i, 0);
+                visualizeHeap();
+            }
+        }
+
+        function visualizeHeap() {
+            const heapContainer = document.getElementById('heap');
+            heapContainer.innerHTML = '';
+            heap.forEach(value => {
+                const node = document.createElement('div');
+                node.className = 'node';
+                node.textContent = value;
+                heapContainer.appendChild(node);
+            });
+        }
+    </script>
+</body>
+</html>
