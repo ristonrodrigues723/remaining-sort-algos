@@ -7,6 +7,15 @@
     <link rel="stylesheet" href="h.css">
 </head>
 <body>
+    <nav>
+        <ul>
+            <li><a href="#">Home</a></li>
+            <li><a href="#">Bubble Sort</a></li>
+            <li><a href="#">Quick Sort</a></li>
+            <li><a href="#">Merge Sort</a></li>
+            <li><a href="#" class="active">Heap Sort</a></li>
+        </ul>
+    </nav>
     <div class="container">
         <h1 class="title">Interactive Heap Sort Visualization</h1>
         <div class="container-header">
@@ -15,15 +24,19 @@
                 <button id="randomButton" onclick="generateRandomNumbers()">Generate Random Numbers</button>
                 <button id="initButton" onclick="initializeHeap()">Initialize Heap</button>
                 <button id="sortButton" onclick="startSort()" disabled>Sort Heap</button>
-                <button id="stepButton" onclick="step()" disabled>Next Step</button>
                 <button id="resetButton" onclick="reset()" disabled>Reset</button>
+            </div>
+            <div class="input-controls">
+                <input type="number" id="newNumber" placeholder="Enter a number">
+                <button id="addButton" onclick="addNumber()">Add Number</button>
+                <button id="removeButton" onclick="removeNumber()">Remove Number</button>
             </div>
         </div>
         <div id="bar-container"></div>
         <div id="number-container"></div>
-        <div class="massage-box">
-            <h2>Explanation</h2>
-            <div id="explanation" class="massage"></div>
+        <div class="message-box">
+            <h2>Messages</h2>
+            <div id="messageList" class="message-list"></div>
         </div>
         <div id="stats">
             <p>Comparisons: <span id="comparisons">0</span></p>

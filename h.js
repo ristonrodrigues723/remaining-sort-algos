@@ -7,22 +7,22 @@ let swaps = 0;
 function generateRandomNumbers() {
     const size = parseInt(document.getElementById('arraySize').value);
     if (size < 5 || size > 20) {
-        alert("Please enter a size between 5 and 20");
+        addMessage("Please enter a size between 5 and 20");
         return;
     }
     heap = Array.from({length: size}, () => Math.floor(Math.random() * 100) + 1);
     resetStats();
     buildMaxHeap();
     visualizeHeap();
-    updateButtons(true, false, true);
-    updateExplanation("Random numbers generated and max heap built. Ready to sort!");
+    updateButtons(true, true, true);
+    addMessage("Random numbers generated and max heap built. Ready to sort!");
 }
 
 function initializeHeap() {
     buildMaxHeap();
     visualizeHeap();
-    updateButtons(true, false, true);
-    updateExplanation("Max heap built. Ready to sort!");
+    updateButtons(true, true, true);
+    addMessage("Max heap built. Ready to sort!");
 }
 
 function buildMaxHeap() {
@@ -55,23 +55,24 @@ function heapify(n, i) {
 function startSort() {
     sorting = true;
     sortingIndex = heap.length - 1;
-    updateButtons(false, true, true);
-    step();
+    updateButtons(false, false, true);
+    sortStep();
 }
 
-function step() {
+function sortStep() {
     if (sortingIndex > 0) {
         swaps++;
         [heap[0], heap[sortingIndex]] = [heap[sortingIndex], heap[0]];
         heapify(sortingIndex, 0);
         sortingIndex--;
         visualizeHeap();
-        updateExplanation(`Swapped largest element (${heap[sortingIndex + 1]}) with last unsorted element. Heapifying remaining elements.`);
+        addMessage(`Swapped largest element (${heap[sortingIndex + 1]}) with last unsorted element. Heapifying remaining elements.`);
         updateStats();
+        setTimeout(sortStep, 1000); // Continue sorting after 1 second
     } else {
         sorting = false;
-        updateButtons(false, false, true);
-        updateExplanation("Heap sort completed!");
+        updateButtons(false, true, true);
+        addMessage("Heap sort completed!");
     }
 }
 
@@ -104,14 +105,19 @@ function visualizeHeap() {
     });
 }
 
-function updateButtons(sortEnabled, stepEnabled, resetEnabled) {
+function updateButtons(sortEnabled, addRemoveEnabled, resetEnabled) {
     document.getElementById('sortButton').disabled = !sortEnabled;
-    document.getElementById('stepButton').disabled = !stepEnabled;
+    document.getElementById('addButton').disabled = !addRemoveEnabled;
+    document.getElementById('removeButton').disabled = !addRemoveEnabled;
     document.getElementById('resetButton').disabled = !resetEnabled;
 }
 
-function updateExplanation(text) {
-    document.getElementById('explanation').textContent = text;
+function addMessage(text) {
+    const messageList = document.getElementById('messageList');
+    const message = document.createElement('p');
+    message.textContent = text;
+    messageList.appendChild(message);
+    messageList.scrollTop = messageList.scrollHeight;
 }
 
 function updateStats() {
@@ -131,6 +137,37 @@ function reset() {
     resetStats();
     document.getElementById('bar-container').innerHTML = '';
     document.getElementById('number-container').innerHTML = '';
-    updateButtons(false, false, false);
-    updateExplanation('');
+    document.getElementById('messageList').innerHTML = '';
+    updateButtons(false, true, false);
+    addMessage('Heap reset. Ready for new input.');
+}
+
+function addNumber() {
+    if (sorting) return;
+    const newNumber = parseInt(document.getElementById('newNumber').value);
+    if (isNaN(newNumber)) {
+        addMessage("Please enter a valid number");
+        return;
+    }
+    if (heap.length >= 20) {
+        addMessage("Maximum array size reached (20)");
+        return;
+    }
+    heap.push(newNumber);
+    buildMaxHeap();
+    visualizeHeap();
+    addMessage(`Number ${newNumber} added and heap rebuilt`);
+    document.getElementById('newNumber').value = '';
+}
+
+function removeNumber() {
+    if (sorting) return;
+    if (heap.length <= 5) {
+        addMessage("Minimum array size reached (5)");
+        return;
+    }
+    const removedNumber = heap.pop();
+    buildMaxHeap();
+    visualizeHeap();
+    addMessage(`Number ${removedNumber} removed and heap rebuilt`);
 }
