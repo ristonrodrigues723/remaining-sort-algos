@@ -11,6 +11,7 @@ const comparisonsElement = document.getElementById('comparisons');
 const swapsElement = document.getElementById('swaps');
 const pauseButton = document.getElementById('pauseButton');
 const currentStateElement = document.getElementById('currentState');
+const messagesElement = document.getElementById('messages');
 
 function generateArray() {
     resetSort();
@@ -20,6 +21,7 @@ function generateArray() {
         array.push(Math.floor(Math.random() * 100) + 1);
     }
     displayArray();
+    addMessage(`Generated new array: [${array.join(', ')}]`);
 }
 
 function displayArray() {
@@ -36,18 +38,24 @@ function displayArray() {
 
 function addElement() {
     if (!isSorting) {
-        const newValue = Math.floor(Math.random() * 100) + 1;
-        array.push(newValue);
-        displayArray();
-        updateCurrentState("Element added");
+        const newElementInput = document.getElementById('newElement');
+        const newValue = parseInt(newElementInput.value);
+        if (newValue >= 1 && newValue <= 100) {
+            array.push(newValue);
+            displayArray();
+            addMessage(`Added element: ${newValue}`);
+            newElementInput.value = '';
+        } else {
+            addMessage('Please enter a number between 1 and 100');
+        }
     }
 }
 
 function removeElement() {
     if (!isSorting && array.length > 0) {
-        array.pop();
+        const removedElement = array.pop();
         displayArray();
-        updateCurrentState("Element removed");
+        addMessage(`Removed element: ${removedElement}`);
     }
 }
 
@@ -55,6 +63,7 @@ function startSort() {
     if (!isSorting) {
         isSorting = true;
         pauseButton.disabled = false;
+        addMessage(`Array before sorting: [${array.join(', ')}]`);
         sortingInterval = setInterval(sortStep, getSpeed());
         updateCurrentState("Sorting");
     } else if (isPaused) {
@@ -96,6 +105,7 @@ function sortStep() {
         isSorting = false;
         pauseButton.disabled = true;
         updateCurrentState("Sorting completed");
+        addMessage(`Array after sorting: [${array.join(', ')}]`);
         return;
     }
 
@@ -142,6 +152,15 @@ function updateInfo() {
 
 function updateCurrentState(state) {
     currentStateElement.textContent = state;
+}
+
+function addMessage(message) {
+    const messageElement = document.createElement('p');
+    messageElement.textContent = message;
+    messagesElement.insertBefore(messageElement, messagesElement.firstChild);
+    if (messagesElement.childElementCount > 5) {
+        messagesElement.removeChild(messagesElement.lastChild);
+    }
 }
 
 generateArray();
