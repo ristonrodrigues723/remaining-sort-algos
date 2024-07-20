@@ -10,6 +10,7 @@ const arrayContainer = document.getElementById('array-container');
 const comparisonsElement = document.getElementById('comparisons');
 const swapsElement = document.getElementById('swaps');
 const pauseButton = document.getElementById('pauseButton');
+const currentStateElement = document.getElementById('currentState');
 
 function generateArray() {
     resetSort();
@@ -33,15 +34,34 @@ function displayArray() {
     });
 }
 
+function addElement() {
+    if (!isSorting) {
+        const newValue = Math.floor(Math.random() * 100) + 1;
+        array.push(newValue);
+        displayArray();
+        updateCurrentState("Element added");
+    }
+}
+
+function removeElement() {
+    if (!isSorting && array.length > 0) {
+        array.pop();
+        displayArray();
+        updateCurrentState("Element removed");
+    }
+}
+
 function startSort() {
     if (!isSorting) {
         isSorting = true;
         pauseButton.disabled = false;
         sortingInterval = setInterval(sortStep, getSpeed());
+        updateCurrentState("Sorting");
     } else if (isPaused) {
         isPaused = false;
         pauseButton.textContent = 'Pause';
         sortingInterval = setInterval(sortStep, getSpeed());
+        updateCurrentState("Sorting");
     }
 }
 
@@ -50,6 +70,7 @@ function pauseSort() {
         clearInterval(sortingInterval);
         isPaused = true;
         pauseButton.textContent = 'Resume';
+        updateCurrentState("Paused");
     } else {
         startSort();
     }
@@ -66,6 +87,7 @@ function resetSort() {
     pauseButton.disabled = true;
     pauseButton.textContent = 'Pause';
     displayArray();
+    updateCurrentState("Reset");
 }
 
 function sortStep() {
@@ -73,6 +95,7 @@ function sortStep() {
         clearInterval(sortingInterval);
         isSorting = false;
         pauseButton.disabled = true;
+        updateCurrentState("Sorting completed");
         return;
     }
 
@@ -115,6 +138,10 @@ function getSpeed() {
 function updateInfo() {
     comparisonsElement.textContent = comparisons;
     swapsElement.textContent = swaps;
+}
+
+function updateCurrentState(state) {
+    currentStateElement.textContent = state;
 }
 
 generateArray();
