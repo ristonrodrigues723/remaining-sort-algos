@@ -2,13 +2,14 @@ let array = [];
 let arrayContainer = document.getElementById('array-container');
 let messagesContainer = document.getElementById('messages');
 let sortingProcess = null;
+let isSorting = false;
 
 function generateArray() {
     const size = parseInt(document.getElementById('arraySize').value);
     array = Array.from({length: size}, () => Math.floor(Math.random() * 100) + 1);
     updateArrayDisplay();
     addMessage("Generated new array: " + array.join(', '));
-    document.getElementById('stepButton').disabled = true;
+    resetSortingControls();
 }
 
 function updateArrayDisplay() {
@@ -36,11 +37,46 @@ function addMessage(message) {
     messagesContainer.scrollTop = messagesContainer.scrollHeight;
 }
 
+function addElement() {
+    const newValue = Math.floor(Math.random() * 100) + 1;
+    array.push(newValue);
+    updateArrayDisplay();
+    addMessage(`Added element: ${newValue}`);
+    resetSortingControls();
+}
+
+function removeElement() {
+    if (array.length > 0) {
+        const removedValue = array.pop();
+        updateArrayDisplay();
+        addMessage(`Removed element: ${removedValue}`);
+        resetSortingControls();
+    } else {
+        addMessage("Cannot remove element from an empty array.");
+    }
+}
+
 async function startSort() {
-    messagesContainer.innerHTML = '';
-    sortingProcess = mergeSort(0, array.length - 1);
-    document.getElementById('stepButton').disabled = false;
-    await stepSort();
+    if (!isSorting) {
+        isSorting = true;
+        messagesContainer.innerHTML = '';
+        sortingProcess = mergeSort(0, array.length - 1);
+        document.getElementById('stepButton').disabled = false;
+        document.getElementById('removeStepButton').disabled = false;
+        await runSort();
+    }
+}
+
+async function runSort() {
+    while (isSorting) {
+        const result = await sortingProcess.next();
+        if (result.done) {
+            addMessage("Sorting completed!");
+            resetSortingControls();
+            break;
+        }
+        await new Promise(resolve => setTimeout(resolve, 500));
+    }
 }
 
 async function stepSort() {
@@ -48,10 +84,27 @@ async function stepSort() {
         const result = await sortingProcess.next();
         if (result.done) {
             addMessage("Sorting completed!");
-            document.getElementById('stepButton').disabled = true;
-            sortingProcess = null;
+            resetSortingControls();
         }
     }
+}
+
+function removeStep() {
+    if (isSorting) {
+        isSorting = false;
+        addMessage("Sorting process stopped.");
+        resetSortingControls();
+    }
+}
+
+function resetSortingControls() {
+    isSorting = false;
+    sortingProcess = null;
+    document.getElementById('stepButton').disabled = true;
+    document.getElementById('removeStepButton').disabled = true;
+    document.querySelectorAll('.bar').forEach(bar => {
+        bar.classList.remove('highlight', 'sorted');
+    });
 }
 
 async function* mergeSort(left, right) {
@@ -68,11 +121,11 @@ async function* merge(left, mid, right) {
     const leftArray = array.slice(left, mid + 1);
     const rightArray = array.slice(mid + 1, right + 1);
     let i = 0, j = 0, k = left;
-
+    
     while (i < leftArray.length && j < rightArray.length) {
         highlightBars([left + i, mid + 1 + j]);
         await new Promise(resolve => setTimeout(resolve, 500));
-
+        
         if (leftArray[i] <= rightArray[j]) {
             array[k] = leftArray[i];
             i++;
@@ -84,7 +137,7 @@ async function* merge(left, mid, right) {
         k++;
         yield;
     }
-
+    
     while (i < leftArray.length) {
         array[k] = leftArray[i];
         updateBar(k, array[k]);
@@ -92,7 +145,7 @@ async function* merge(left, mid, right) {
         k++;
         yield;
     }
-
+    
     while (j < rightArray.length) {
         array[k] = rightArray[j];
         updateBar(k, array[k]);
@@ -100,11 +153,11 @@ async function* merge(left, mid, right) {
         k++;
         yield;
     }
-
+    
     for (let index = left; index <= right; index++) {
         document.getElementById(`bar-${index}`).classList.add('sorted');
     }
-
+    
     addMessage(`Merged: ${array.slice(left, right + 1).join(', ')}`);
 }
 
