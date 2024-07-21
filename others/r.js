@@ -3,7 +3,7 @@ let sortingSpeed = 50;
 let sortingSteps = [];
 let currentStep = -1;
 const container = document.getElementById('array-container');
-const infoElement = document.getElementById('info');
+const messageBox = document.getElementById('message-box');
 
 function addElement() {
     const input = document.getElementById('number-input');
@@ -12,13 +12,15 @@ function addElement() {
         array.push(num);
         input.value = '';
         reset();
+        updateMessageBox(`Added element: ${num}`);
     }
 }
 
 function removeElement() {
     if (array.length > 0) {
-        array.pop();
+        const removed = array.pop();
         reset();
+        updateMessageBox(`Removed element: ${removed}`);
     }
 }
 
@@ -26,11 +28,13 @@ function generateRandomArray() {
     const size = Math.floor(Math.random() * 10) + 5; // 5 to 14 elements
     array = Array.from({length: size}, () => Math.floor(Math.random() * 900) + 100); // 100 to 999
     reset();
+    updateMessageBox(`Generated random array: [${array.join(', ')}]`);
 }
 
 function clearArray() {
     array = [];
     reset();
+    updateMessageBox('Array cleared');
 }
 
 function createBars() {
@@ -51,6 +55,7 @@ function sleep(ms) {
 }
 
 async function radixSort() {
+    updateMessageBox('Starting Radix Sort...');
     sortingSteps = [array.slice()];
     const max = Math.max(...array);
     let exp = 1;
@@ -60,7 +65,7 @@ async function radixSort() {
         exp *= 10;
         await sleep(2000 - sortingSpeed * 19);
     }
-    infoElement.textContent = "Sorting completed!";
+    updateMessageBox('Sorting completed!');
 }
 
 async function countingSort(exp) {
@@ -87,7 +92,7 @@ async function countingSort(exp) {
         updateBars();
     }
 
-    infoElement.textContent = `Sorted by ${exp}'s place`;
+    updateMessageBox(`Sorted by ${exp}'s place`);
 }
 
 function updateBars() {
@@ -112,9 +117,9 @@ function reset() {
     createBars();
     sortingSteps = [];
     currentStep = -1;
-    infoElement.textContent = '';
     document.getElementById('step-forward').disabled = false;
     document.getElementById('step-back').disabled = true;
+    updateMessageBox('Array reset');
 }
 
 function stepForward() {
@@ -126,6 +131,7 @@ function stepForward() {
         if (currentStep === sortingSteps.length - 1) {
             document.getElementById('step-forward').disabled = true;
         }
+        updateMessageBox(`Step ${currentStep + 1} of ${sortingSteps.length}`);
     }
 }
 
@@ -138,7 +144,12 @@ function stepBackward() {
         if (currentStep === 0) {
             document.getElementById('step-back').disabled = true;
         }
+        updateMessageBox(`Step ${currentStep + 1} of ${sortingSteps.length}`);
     }
+}
+
+function updateMessageBox(message) {
+    messageBox.textContent = message;
 }
 
 document.getElementById('speed-slider').addEventListener('input', function() {
