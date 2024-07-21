@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Counting Sort</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        #array, #counts {
+            margin: 20px 0;
+            font-size: 24px;
+        }
+        button {
+            font-size: 18px;
+            margin: 10px;
+            padding: 5px 10px;
+        }
+        .number {
+            display: inline-block;
+            width: 30px;
+            height: 30px;
+            line-height: 30px;
+            text-align: center;
+            border: 1px solid #333;
+            margin: 2px;
+        }
+        #steps {
+            margin-top: 20px;
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+    <h1>Simple Counting Sort</h1>
+    <div id="array"></div>
+    <div id="counts"></div>
+    <button onclick="generateArray()">Generate Array</button>
+    <button onclick="sort()">Sort</button>
+    <div id="steps"></div>
+
+    <script>
+        let arr = [];
+        let stepsElement = document.getElementById('steps');
+
+        function generateArray() {
+            arr = Array.from({length: 10}, () => Math.floor(Math.random() * 10));
+            displayArray();
+            stepsElement.innerHTML = '';
+        }
+
+        function displayArray() {
+            let html = '';
+            for (let num of arr) {
+                html += `<span class="number">${num}</span>`;
+            }
+            document.getElementById('array').innerHTML = html;
+        }
+
+        function displayCounts(counts) {
+            let html = 'Counts: ';
+            for (let i = 0; i < counts.length; i++) {
+                if (counts[i] > 0) {
+                    html += `${i}(${counts[i]}) `;
+                }
+            }
+            document.getElementById('counts').innerHTML = html;
+        }
+
+        function addStep(step) {
+            stepsElement.innerHTML += `<p>${step}</p>`;
+        }
+
+        function sort() {
+            const max = Math.max(...arr);
+            const count = new Array(max + 1).fill(0);
+            
+            addStep("Counting occurrences of each number...");
+            for (let num of arr) {
+                count[num]++;
+            }
+            displayCounts(count);
+            
+            addStep("Reconstructing the sorted array...");
+            let sortedIndex = 0;
+            for (let i = 0; i <= max; i++) {
+                for (let j = 0; j < count[i]; j++) {
+                    arr[sortedIndex] = i;
+                    sortedIndex++;
+                }
+            }
+            
+            addStep("Sorting completed!");
+            displayArray();
+        }
+
+        generateArray();
+    </script>
+</body>
+</html>
