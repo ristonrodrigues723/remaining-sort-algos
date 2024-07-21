@@ -1,0 +1,21 @@
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    height: 300px;
+    margin-top: 20px;
+}
+
+.bar {
+    width: 30px;
+    margin: 0 2px;
+    background-color: #3498db;
+    transition: height 0.5s;
+}
+
+button {
+    display: block;
+    margin: 20px auto;
+    padding: 10px 20px;
+    font-size: 16px;
+}
