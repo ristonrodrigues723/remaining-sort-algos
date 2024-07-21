@@ -7,9 +7,13 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+    <h1>Interactive Radix Sort Visualization</h1>
     <div class="controls">
-        <input type="text" id="number-input" placeholder="Enter numbers (comma-separated)">
-        <button onclick="setArray()">Set Array</button>
+        <input type="text" id="number-input" placeholder="Enter a number">
+        <button onclick="addElement()">Add Element</button>
+        <button onclick="removeElement()">Remove Last Element</button>
+        <button onclick="generateRandomArray()">Generate Random Array</button>
+        <button onclick="clearArray()">Clear Array</button>
         <button onclick="startSort()">Start Sort</button>
         <button onclick="reset()">Reset</button>
         <div class="speed-control">

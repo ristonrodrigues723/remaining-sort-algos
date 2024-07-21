@@ -5,20 +5,43 @@ let currentStep = -1;
 const container = document.getElementById('array-container');
 const infoElement = document.getElementById('info');
 
-function setArray() {
-    const input = document.getElementById('number-input').value;
-    array = input.split(',').map(num => parseInt(num.trim())).filter(num => !isNaN(num));
+function addElement() {
+    const input = document.getElementById('number-input');
+    const num = parseInt(input.value.trim());
+    if (!isNaN(num)) {
+        array.push(num);
+        input.value = '';
+        reset();
+    }
+}
+
+function removeElement() {
+    if (array.length > 0) {
+        array.pop();
+        reset();
+    }
+}
+
+function generateRandomArray() {
+    const size = Math.floor(Math.random() * 10) + 5; // 5 to 14 elements
+    array = Array.from({length: size}, () => Math.floor(Math.random() * 900) + 100); // 100 to 999
+    reset();
+}
+
+function clearArray() {
+    array = [];
     reset();
 }
 
 function createBars() {
     container.innerHTML = '';
-    const maxNum = Math.max(...array);
-    array.forEach(num => {
+    const maxNum = Math.max(...array, 1);
+    array.forEach((num, index) => {
         const bar = document.createElement('div');
         bar.className = 'bar';
         bar.style.height = `${(num / maxNum) * 280}px`;
         bar.textContent = num;
+        bar.style.order = index;
         container.appendChild(bar);
     });
 }
@@ -61,10 +84,22 @@ async function countingSort(exp) {
         array[i] = output[i];
         sortingSteps.push(array.slice());
         await sleep(2000 - sortingSpeed * 19);
-        createBars();
+        updateBars();
     }
 
     infoElement.textContent = `Sorted by ${exp}'s place`;
+}
+
+function updateBars() {
+    const bars = document.querySelectorAll('.bar');
+    const maxNum = Math.max(...array);
+    bars.forEach((bar, index) => {
+        bar.style.height = `${(array[index] / maxNum) * 280}px`;
+        bar.textContent = array[index];
+        bar.style.order = index;
+        bar.classList.add('highlight');
+        setTimeout(() => bar.classList.remove('highlight'), 300);
+    });
 }
 
 function startSort() {
@@ -86,7 +121,7 @@ function stepForward() {
     if (currentStep < sortingSteps.length - 1) {
         currentStep++;
         array = sortingSteps[currentStep].slice();
-        createBars();
+        updateBars();
         document.getElementById('step-back').disabled = false;
         if (currentStep === sortingSteps.length - 1) {
             document.getElementById('step-forward').disabled = true;
@@ -98,7 +133,7 @@ function stepBackward() {
     if (currentStep > 0) {
         currentStep--;
         array = sortingSteps[currentStep].slice();
-        createBars();
+        updateBars();
         document.getElementById('step-forward').disabled = false;
         if (currentStep === 0) {
             document.getElementById('step-back').disabled = true;
