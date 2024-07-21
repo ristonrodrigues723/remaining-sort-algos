@@ -3,23 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Simple Counting Sort Visualization</title>
+    <title>Interactive Counting Sort Visualization</title>
     <link rel="stylesheet" href="c.css">
 </head>
 <body>
-   
-
     <div class="container">
-        <h1>Simple Counting Sort Visualization</h1>
+        <h1>Interactive Counting Sort Visualization</h1>
         <div class="controls">
+            <input type="text" id="number-input" placeholder="Enter a number">
+            <button onclick="addElement()">Add Element</button>
+            <button onclick="removeElement()">Remove Last Element</button>
             <button onclick="generateRandomArray()">Generate Random Array</button>
+            <button onclick="clearArray()">Clear Array</button>
             <button onclick="startSort()">Start Sort</button>
+            <div class="speed-control">
+                <label for="speed-slider">Speed:</label>
+                <input type="range" id="speed-slider" min="1" max="100" value="50">
+            </div>
         </div>
         <div id="array-container"></div>
-        <div id="count-container"></div>
-        <div id="message-box"></div>
     </div>
-
     <script src="c.js"></script>
 </body>
 </html>
