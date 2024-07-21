@@ -1,12 +1,23 @@
-const array = [170, 45, 75, 90, 802, 24, 2, 66];
+let array = [170, 45, 75, 90, 802, 24, 2, 66];
+let sortingSpeed = 50;
+let sortingSteps = [];
+let currentStep = -1;
 const container = document.getElementById('array-container');
+const infoElement = document.getElementById('info');
+
+function setArray() {
+    const input = document.getElementById('number-input').value;
+    array = input.split(',').map(num => parseInt(num.trim())).filter(num => !isNaN(num));
+    reset();
+}
 
 function createBars() {
     container.innerHTML = '';
+    const maxNum = Math.max(...array);
     array.forEach(num => {
         const bar = document.createElement('div');
         bar.className = 'bar';
-        bar.style.height = `${num}px`;
+        bar.style.height = `${(num / maxNum) * 280}px`;
         bar.textContent = num;
         container.appendChild(bar);
     });
@@ -17,14 +28,16 @@ function sleep(ms) {
 }
 
 async function radixSort() {
+    sortingSteps = [array.slice()];
     const max = Math.max(...array);
     let exp = 1;
 
     while (Math.floor(max / exp) > 0) {
         await countingSort(exp);
         exp *= 10;
-        await sleep(1000);
+        await sleep(2000 - sortingSpeed * 19);
     }
+    infoElement.textContent = "Sorting completed!";
 }
 
 async function countingSort(exp) {
@@ -46,13 +59,55 @@ async function countingSort(exp) {
 
     for (let i = 0; i < array.length; i++) {
         array[i] = output[i];
-        await sleep(500);
+        sortingSteps.push(array.slice());
+        await sleep(2000 - sortingSpeed * 19);
         createBars();
     }
+
+    infoElement.textContent = `Sorted by ${exp}'s place`;
 }
 
 function startSort() {
     radixSort();
+    document.getElementById('step-forward').disabled = false;
+    document.getElementById('step-back').disabled = true;
 }
 
-createBars();
+function reset() {
+    createBars();
+    sortingSteps = [];
+    currentStep = -1;
+    infoElement.textContent = '';
+    document.getElementById('step-forward').disabled = false;
+    document.getElementById('step-back').disabled = true;
+}
+
+function stepForward() {
+    if (currentStep < sortingSteps.length - 1) {
+        currentStep++;
+        array = sortingSteps[currentStep].slice();
+        createBars();
+        document.getElementById('step-back').disabled = false;
+        if (currentStep === sortingSteps.length - 1) {
+            document.getElementById('step-forward').disabled = true;
+        }
+    }
+}
+
+function stepBackward() {
+    if (currentStep > 0) {
+        currentStep--;
+        array = sortingSteps[currentStep].slice();
+        createBars();
+        document.getElementById('step-forward').disabled = false;
+        if (currentStep === 0) {
+            document.getElementById('step-back').disabled = true;
+        }
+    }
+}
+
+document.getElementById('speed-slider').addEventListener('input', function() {
+    sortingSpeed = this.value;
+});
+
+reset();
