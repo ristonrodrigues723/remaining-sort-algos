@@ -7,22 +7,35 @@
     <link rel="stylesheet" href="b.css">
 </head>
 <body>
+    <nav>
+        <ul>
+            <li><a href="#">Home</a></li>
+            <li><a href="m.html">Merge Sort</a></li>
+            <li><a href="i.html">Insertion Sort</a></li>
+            <li><a href="\index.html">Heap Sort</a></li>
+            <li><a href="r.html">Radix Sort</a></li>
+            <li><a href="c.html" >Counting Sort</a></li>
+            <li><a href="q.html">Quick Sort</a></li>
+            <li><a href="b.html" class="active">Bubble Sort</a></li>
+            <li><a href="s.html">Selection Sort</a></li>
+        </ul>
+    </nav>
     <div class="container">
-        <h1 class="title">Bubble Sort Visualizer</h1>
-        <div class="container-header">
-            <div class="input-controls">
-                <input type="number" id="numberInput" placeholder="Enter a number">
-                <button id="addBtn">Add Number</button>
-                <button id="sortBtn">Sort</button>
-                <button id="clearBtn">Clear</button>
-            </div>
+        <h1>Bubble Sort Visualizer</h1>
+        <div class="controls">
+            <input type="number" id="numberInput" placeholder="Enter a number (1-100)">
+            <button id="addBtn">Add Number</button>
+            <button id="removeBtn">Remove Last</button>
+            <button id="generateBtn">Generate Random Array</button>
+            <button id="clearBtn">Clear</button>
+            <button id="sortBtn">Sort</button>
         </div>
-        <div id="bar-container"></div>
-        <div id="number-container"></div>
-        <div class="massage-box">
-            <h2>Sorting Process</h2>
-            <div id="massage" class="massage"></div>
+        <div class="speed-control">
+            <label for="speedSlider">Speed:</label>
+            <input type="range" id="speedSlider" min="1" max="100" value="50">
         </div>
+        <div id="array-container"></div>
+        <div id="message-box"></div>
     </div>
     <script src="b.js"></script>
 </body>

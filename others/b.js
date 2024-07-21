@@ -1,83 +1,101 @@
-let numbers = [];
-const barContainer = document.getElementById('bar-container');
-const numberContainer = document.getElementById('number-container');
+let array = [];
+let sorting = false;
+
+const arrayContainer = document.getElementById('array-container');
+const messageBox = document.getElementById('message-box');
 const numberInput = document.getElementById('numberInput');
 const addBtn = document.getElementById('addBtn');
-const sortBtn = document.getElementById('sortBtn');
+const removeBtn = document.getElementById('removeBtn');
+const generateBtn = document.getElementById('generateBtn');
 const clearBtn = document.getElementById('clearBtn');
-const messageBox = document.getElementById('massage');
+const sortBtn = document.getElementById('sortBtn');
+const speedSlider = document.getElementById('speedSlider');
 
-addBtn.addEventListener('click', addNumber);
-sortBtn.addEventListener('click', startSort);
-clearBtn.addEventListener('click', clearNumbers);
-
-function addNumber() {
-    const num = parseInt(numberInput.value);
-    if (!isNaN(num)) {
-        numbers.push(num);
-        updateVisualization();
-        numberInput.value = '';
-    }
+function setMessage(msg) {
+    messageBox.textContent = msg;
 }
 
-function updateVisualization() {
-    barContainer.innerHTML = '';
-    numberContainer.innerHTML = '';
-    const maxHeight = 280;
-    const maxNum = Math.max(...numbers, 1);
-    numbers.forEach(num => {
+function updateArrayDisplay() {
+    arrayContainer.innerHTML = '';
+    array.forEach(value => {
         const bar = document.createElement('div');
         bar.className = 'bar';
-        bar.style.height = `${(num / maxNum) * maxHeight}px`;
-        barContainer.appendChild(bar);
-
-        const numberDiv = document.createElement('div');
-        numberDiv.className = 'number';
-        numberDiv.textContent = num;
-        numberContainer.appendChild(numberDiv);
+        bar.style.height = `${value * 3}px`;
+        bar.textContent = value;
+        arrayContainer.appendChild(bar);
     });
 }
 
-async function startSort() {
-    sortBtn.disabled = true;
-    addBtn.disabled = true;
-    clearBtn.disabled = true;
+function generateRandomArray() {
+    array = Array.from({length: 10}, () => Math.floor(Math.random() * 100) + 1);
+    updateArrayDisplay();
+    setMessage('Random array generated');
+}
 
-    const bars = document.getElementsByClassName('bar');
-    const numberDivs = document.getElementsByClassName('number');
-
-    // Display numbers before sorting
-    messageBox.innerHTML = `<p>Numbers before sorting: ${numbers.join(', ')}</p>`;
-
-    for (let i = 0; i < numbers.length; i++) {
-        for (let j = 0; j < numbers.length - i - 1; j++) {
-            bars[j].style.backgroundColor = '#e74c3c';
-            bars[j + 1].style.backgroundColor = '#e74c3c';
-            await new Promise(resolve => setTimeout(resolve, 500));
-
-            if (numbers[j] > numbers[j + 1]) {
-                [numbers[j], numbers[j + 1]] = [numbers[j + 1], numbers[j]];
-                updateVisualization();
-                await new Promise(resolve => setTimeout(resolve, 500));
-            }
-
-            bars[j].style.backgroundColor = '#3498db';
-            bars[j + 1].style.backgroundColor = '#3498db';
-        }
-        bars[numbers.length - i - 1].style.backgroundColor = '#2ecc71';
-        numberDivs[numbers.length - i - 1].style.color = '#2ecc71';
+function addElement() {
+    const num = parseInt(numberInput.value);
+    if (!isNaN(num) && num > 0 && num <= 100) {
+        array.push(num);
+        updateArrayDisplay();
+        numberInput.value = '';
+        setMessage(`Added ${num} to the array`);
+    } else {
+        setMessage('Please enter a valid number between 1 and 100');
     }
-
-    // Display numbers after sorting
-    messageBox.innerHTML += `<p>Numbers after sorting: ${numbers.join(', ')}</p>`;
-
-    sortBtn.disabled = false;
-    addBtn.disabled = false;
-    clearBtn.disabled = false;
 }
 
-function clearNumbers() {
-    numbers = [];
-    updateVisualization();
-    messageBox.innerHTML = '';
+function removeElement() {
+    if (array.length > 0) {
+        array.pop();
+        updateArrayDisplay();
+        setMessage('Removed last element from the array');
+    } else {
+        setMessage('Array is already empty');
+    }
 }
+
+function clearArray() {
+    array = [];
+    updateArrayDisplay();
+    setMessage('Array cleared');
+}
+
+async function bubbleSort() {
+    sorting = true;
+    setControlsEnabled(false);
+    
+    for (let i = 0; i < array.length - 1; i++) {
+        for (let j = 0; j < array.length - i - 1; j++) {
+            if (array[j] > array[j + 1]) {
+                // Swap elements
+                [array[j], array[j + 1]] = [array[j + 1], array[j]];
+                updateArrayDisplay();
+                setMessage(`Comparing ${array[j]} and ${array[j+1]}`);
+                await new Promise(resolve => setTimeout(resolve, 101 - speedSlider.value));
+            }
+        }
+    }
+    
+    sorting = false;
+    setControlsEnabled(true);
+    setMessage('Sorting complete');
+}
+
+function setControlsEnabled(enabled) {
+    addBtn.disabled = !enabled;
+    removeBtn.disabled = !enabled;
+    generateBtn.disabled = !enabled;
+    clearBtn.disabled = !enabled;
+    sortBtn.disabled = !enabled;
+    numberInput.disabled = !enabled;
+}
+
+// Event listeners
+addBtn.addEventListener('click', addElement);
+removeBtn.addEventListener('click', removeElement);
+generateBtn.addEventListener('click', generateRandomArray);
+clearBtn.addEventListener('click', clearArray);
+sortBtn.addEventListener('click', bubbleSort);
+
+// Initialize
+generateRandomArray();
