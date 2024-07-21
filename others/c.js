@@ -3,6 +3,7 @@ let sortingSpeed = 50;
 let sortingSteps = [];
 let currentStep = -1;
 const container = document.getElementById('array-container');
+const messageBox = document.getElementById('message-box');
 
 function addElement() {
     const input = document.getElementById('number-input');
@@ -11,13 +12,19 @@ function addElement() {
         array.push(num);
         input.value = '';
         reset();
+        updateMessageBox(`Added element: ${num}`);
+    } else {
+        updateMessageBox('Warning: Please enter a number between 0 and 9');
     }
 }
 
 function removeElement() {
     if (array.length > 0) {
-        array.pop();
+        const removed = array.pop();
         reset();
+        updateMessageBox(`Removed element: ${removed}`);
+    } else {
+        updateMessageBox('Warning: Array is already empty');
     }
 }
 
@@ -25,11 +32,13 @@ function generateRandomArray() {
     const size = Math.floor(Math.random() * 10) + 5; // 5 to 14 elements
     array = Array.from({length: size}, () => Math.floor(Math.random() * 10)); // 0 to 9
     reset();
+    updateMessageBox(`Generated random array: [${array.join(', ')}]`);
 }
 
 function clearArray() {
     array = [];
     reset();
+    updateMessageBox('Array cleared');
 }
 
 function createBars() {
@@ -49,6 +58,7 @@ function sleep(ms) {
 }
 
 async function countingSort() {
+    updateMessageBox(`Sorting array: [${array.join(', ')}]`);
     sortingSteps = [array.slice()];
     const max = Math.max(...array);
     const count = new Array(max + 1).fill(0);
@@ -85,6 +95,7 @@ async function countingSort() {
     }
     sortingSteps.push([...array]);
     updateBars(array);
+    updateMessageBox(`Sorting completed. Sorted array: [${array.join(', ')}]`);
 }
 
 function updateBars(currentArray) {
@@ -110,8 +121,13 @@ function reset() {
     currentStep = -1;
 }
 
+function updateMessageBox(message) {
+    messageBox.textContent = message;
+}
+
 document.getElementById('speed-slider').addEventListener('input', function() {
     sortingSpeed = this.value;
 });
 
 reset();
+updateMessageBox('Welcome to Counting Sort Visualization!');
